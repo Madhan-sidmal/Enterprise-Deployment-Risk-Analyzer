@@ -13,8 +13,9 @@ import DeploymentDetails from './pages/DeploymentDetails';
 import RiskAnalysis from './pages/RiskAnalysis';
 import Dependencies from './pages/Dependencies';
 import Rollback from './pages/Rollback';
+import Approvals from './pages/Approvals';
 import {
-  ApprovalsPage, AuditLogsPage, AnalyticsPage, UsersPage
+  AuditLogsPage, AnalyticsPage, UsersPage
 } from './pages/ComingSoon';
 
 // Layout wrapper with sidebar
@@ -66,11 +67,7 @@ const App = () => {
             <Route path="/risk-analysis" element={<RiskAnalysis />} />
             <Route path="/dependencies" element={<Dependencies />} />
             <Route path="/rollback" element={<Rollback />} />
-            <Route path="/approvals" element={
-              <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_RELEASE_MANAGER']}>
-                <ApprovalsPage />
-              </ProtectedRoute>
-            } />
+            <Route path="/approvals" element={<Approvals />} />
             <Route path="/audit-logs" element={<AuditLogsPage />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
             <Route path="/users" element={
