@@ -20,21 +20,6 @@ jobs:
     name: 🔧 Backend Build & Test
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16-alpine
-        env:
-          POSTGRES_DB:       edra_test
-          POSTGRES_USER:     edra_user
-          POSTGRES_PASSWORD: edra_secret
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - name: ⬇️ Checkout code
         uses: actions/checkout@v4
@@ -50,12 +35,7 @@ jobs:
         run: mvn validate -q
         working-directory: edra-backend
 
-      - name: 🏗️ Build & Run Tests
-        env:
-          SPRING_DATASOURCE_URL:      jdbc:postgresql://localhost:5432/edra_test
-          SPRING_DATASOURCE_USERNAME: edra_user
-          SPRING_DATASOURCE_PASSWORD: edra_secret
-          JWT_SECRET:                 test-jwt-secret-key-ci-pipeline-only
+      - name: 🏗️ Build & Run Tests (H2 in-memory DB)
         run: mvn clean verify -q
         working-directory: edra-backend
 

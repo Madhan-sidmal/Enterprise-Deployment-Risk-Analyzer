@@ -191,6 +191,26 @@ public class RiskScoreService {
         return factors;
     }
 
+    /**
+     * Public pure-function: calculates raw score from a Deployment object.
+     * Used by unit tests and can be called without a DB transaction.
+     */
+    public int calculateScore(Deployment dep) {
+        int scoreFiles   = (dep.getModifiedFilesCount() != null && dep.getModifiedFilesCount() > 20) ? SCORE_MODIFIED_FILES : 0;
+        int scoreProd    = dep.getEnvironment() == Environment.PRODUCTION ? SCORE_PRODUCTION : 0;
+        int scoreCfg     = Boolean.TRUE.equals(dep.getHasCriticalConfigChange()) ? SCORE_CRITICAL_CONFIG : 0;
+        int scoreDep     = Boolean.TRUE.equals(dep.getHasDependencyConflict())   ? SCORE_DEPENDENCY : 0;
+        int scoreFailure = (dep.getPreviousFailureCount() != null && dep.getPreviousFailureCount() > 0) ? SCORE_FAILURE_HISTORY : 0;
+        return Math.min(scoreFiles + scoreProd + scoreCfg + scoreDep + scoreFailure, MAX_SCORE);
+    }
+
+    /** Public pure-function: maps a score to a RiskLevel. */
+    public RiskLevel determineRiskLevel(int score) {
+        if (score <= 30) return RiskLevel.LOW;
+        if (score <= 60) return RiskLevel.MEDIUM;
+        return RiskLevel.HIGH;
+    }
+
     private String buildRecommendation(RiskLevel level, boolean isProd, boolean hasCfg, boolean hasDep) {
         StringBuilder sb = new StringBuilder();
         switch (level) {
