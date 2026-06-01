@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import deploymentService from '../services/deployment.service';
 
 const StatCard = ({ icon, label, value, change, changeType, iconBg, iconColor, delay }) => (
   <div className="stat-card animate-fade-in-up" style={{ animationDelay: delay }}>
@@ -50,6 +52,14 @@ const QuickAction = ({ icon, title, description, onClick, gradient }) => (
 
 const Dashboard = () => {
   const { user, isAdmin, isReleaseManager } = useAuth();
+  const navigate = useNavigate();
+  const [stats, setStats] = useState({ total: 0, approved: 0, pendingReview: 0, deployed: 0 });
+
+  useEffect(() => {
+    deploymentService.getStats()
+      .then(setStats)
+      .catch(() => {}); // silently ignore if backend not running
+  }, []);
 
   const getRoleDisplay = () => {
     if (!user?.roles) return 'Developer';
@@ -99,24 +109,23 @@ const Dashboard = () => {
       {/* Stats Grid */}
       <div className="stats-grid stagger-children">
         <StatCard
-          icon="🚀" label="Total Deployments" value="0"
-          change="Phase 2 coming" changeType="up"
+          icon="🚀" label="Total Deployments" value={stats.total}
           iconBg="rgba(99,102,241,0.15)" iconColor="#818cf8"
           delay="0.05s"
         />
         <StatCard
-          icon="⚠️" label="High Risk" value="0"
-          iconBg="rgba(239,68,68,0.15)" iconColor="#f87171"
+          icon="🟡" label="Pending Review" value={stats.pendingReview}
+          iconBg="rgba(245,158,11,0.15)" iconColor="#fbbf24"
           delay="0.1s"
         />
         <StatCard
-          icon="✅" label="Approved" value="0"
+          icon="✅" label="Approved" value={stats.approved}
           iconBg="rgba(16,185,129,0.15)" iconColor="#34d399"
           delay="0.15s"
         />
         <StatCard
-          icon="🔄" label="Pending Review" value="0"
-          iconBg="rgba(245,158,11,0.15)" iconColor="#fbbf24"
+          icon="🚢" label="Deployed" value={stats.deployed}
+          iconBg="rgba(6,182,212,0.15)" iconColor="#22d3ee"
           delay="0.2s"
         />
       </div>
@@ -134,22 +143,26 @@ const Dashboard = () => {
               icon="📦" title="New Deployment"
               description="Create and submit a new deployment package"
               gradient="rgba(99,102,241,0.2)"
+              onClick={() => navigate('/deployments/new')}
+            />
+            <QuickAction
+              icon="📋" title="All Deployments"
+              description="View and manage all your deployment packages"
+              gradient="rgba(6,182,212,0.2)"
+              onClick={() => navigate('/deployments')}
             />
             <QuickAction
               icon="🔍" title="Risk Analysis"
-              description="Run risk scoring on pending deployments"
+              description="Run risk scoring on pending deployments (Phase 3)"
               gradient="rgba(239,68,68,0.2)"
-            />
-            <QuickAction
-              icon="🌐" title="Dependency Check"
-              description="Analyze service dependencies and conflicts"
-              gradient="rgba(6,182,212,0.2)"
+              onClick={() => navigate('/risk-analysis')}
             />
             {(isAdmin() || isReleaseManager()) && (
               <QuickAction
                 icon="✅" title="Approval Queue"
-                description="Review and approve pending deployments"
+                description="Review and approve pending deployments (Phase 6)"
                 gradient="rgba(16,185,129,0.2)"
+                onClick={() => navigate('/approvals')}
               />
             )}
           </div>
@@ -225,8 +238,8 @@ const Dashboard = () => {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 'var(--space-3)' }}>
           {[
             { phase: 1, name: 'Foundation', status: 'done' },
-            { phase: 2, name: 'Deployments', status: 'next' },
-            { phase: 3, name: 'Risk Engine', status: 'pending' },
+            { phase: 2, name: 'Deployments', status: 'done' },
+            { phase: 3, name: 'Risk Engine', status: 'next' },
             { phase: 4, name: 'Dependencies', status: 'pending' },
             { phase: 5, name: 'Rollback', status: 'pending' },
           ].map(p => (

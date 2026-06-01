@@ -7,8 +7,11 @@ import Sidebar from './components/Sidebar';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import Deployments from './pages/Deployments';
+import CreateDeployment from './pages/CreateDeployment';
+import DeploymentDetails from './pages/DeploymentDetails';
 import {
-  DeploymentsPage, RiskAnalysisPage, DependenciesPage,
+  RiskAnalysisPage, DependenciesPage,
   RollbackPage, ApprovalsPage, AuditLogsPage, AnalyticsPage, UsersPage
 } from './pages/ComingSoon';
 
@@ -54,7 +57,10 @@ const App = () => {
             </ProtectedRoute>
           }>
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/deployments" element={<DeploymentsPage />} />
+            <Route path="/deployments" element={<Deployments />} />
+            <Route path="/deployments/new" element={<CreateDeployment />} />
+            <Route path="/deployments/:id" element={<DeploymentDetails />} />
+            <Route path="/deployments/:id/edit" element={<CreateDeployment />} />
             <Route path="/risk-analysis" element={<RiskAnalysisPage />} />
             <Route path="/dependencies" element={<DependenciesPage />} />
             <Route path="/rollback" element={<RollbackPage />} />
