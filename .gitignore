@@ -1,0 +1,43 @@
+# ================================
+# EDRA — Enterprise Deployment Risk Analyzer
+# .gitignore
+# ================================
+
+# Maven / Spring Boot
+edra-backend/target/
+edra-backend/*.class
+edra-backend/*.jar
+edra-backend/*.war
+
+# Maven wrapper
+edra-backend/.mvn/
+edra-backend/mvnw
+edra-backend/mvnw.cmd
+
+# Node / React
+edra-frontend/node_modules/
+edra-frontend/dist/
+edra-frontend/.vite/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.idea/
+*.iml
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
