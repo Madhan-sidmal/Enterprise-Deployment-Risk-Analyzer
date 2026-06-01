@@ -240,8 +240,8 @@ const Dashboard = () => {
             { phase: 1, name: 'Foundation', status: 'done' },
             { phase: 2, name: 'Deployments', status: 'done' },
             { phase: 3, name: 'Risk Engine', status: 'done' },
-            { phase: 4, name: 'Dependencies', status: 'next' },
-            { phase: 5, name: 'Rollback', status: 'pending' },
+            { phase: 4, name: 'Dependencies', status: 'done' },
+            { phase: 5, name: 'Rollback', status: 'next' },
           ].map(p => (
             <div key={p.phase} style={{
               padding: 'var(--space-3)',

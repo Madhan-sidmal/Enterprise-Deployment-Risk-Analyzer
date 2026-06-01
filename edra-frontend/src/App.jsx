@@ -11,8 +11,8 @@ import Deployments from './pages/Deployments';
 import CreateDeployment from './pages/CreateDeployment';
 import DeploymentDetails from './pages/DeploymentDetails';
 import RiskAnalysis from './pages/RiskAnalysis';
+import Dependencies from './pages/Dependencies';
 import {
-  DependenciesPage,
   RollbackPage, ApprovalsPage, AuditLogsPage, AnalyticsPage, UsersPage
 } from './pages/ComingSoon';
 
@@ -63,7 +63,7 @@ const App = () => {
             <Route path="/deployments/:id" element={<DeploymentDetails />} />
             <Route path="/deployments/:id/edit" element={<CreateDeployment />} />
             <Route path="/risk-analysis" element={<RiskAnalysis />} />
-            <Route path="/dependencies" element={<DependenciesPage />} />
+            <Route path="/dependencies" element={<Dependencies />} />
             <Route path="/rollback" element={<RollbackPage />} />
             <Route path="/approvals" element={
               <ProtectedRoute requiredRoles={['ROLE_ADMIN', 'ROLE_RELEASE_MANAGER']}>
