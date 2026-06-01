@@ -26,6 +26,7 @@ public class ApprovalService {
     private final ApprovalRecordRepository approvalRepo;
     private final DeploymentRepository     deploymentRepo;
     private final UserRepository           userRepo;
+    private final AuditLogService          auditLogService;
 
     private User getCurrentUser() {
         UserDetailsImpl u = (UserDetailsImpl)
@@ -50,6 +51,8 @@ public class ApprovalService {
 
         ApprovalRecord ar = buildRecord(dep, ApprovalDecision.APPROVED, req.getComment(), prevStatus);
         ApprovalRecord saved = approvalRepo.save(ar);
+        auditLogService.log(AuditAction.DEPLOYMENT_APPROVED, "DEPLOYMENT", deploymentId,
+                dep.getApplicationName() + " v" + dep.getVersion(), "Approved by: " + saved.getReviewedBy().getUsername());
         log.info("Deployment {} APPROVED by {}", dep.getDeploymentId(), saved.getReviewedBy().getUsername());
         return ApprovalRecordResponse.from(saved);
     }
@@ -70,6 +73,8 @@ public class ApprovalService {
 
         ApprovalRecord ar = buildRecord(dep, ApprovalDecision.REJECTED, req.getComment(), prevStatus);
         ApprovalRecord saved = approvalRepo.save(ar);
+        auditLogService.log(AuditAction.DEPLOYMENT_REJECTED, "DEPLOYMENT", deploymentId,
+                dep.getApplicationName() + " v" + dep.getVersion(), "Rejected by: " + saved.getReviewedBy().getUsername());
         log.info("Deployment {} REJECTED by {}", dep.getDeploymentId(), saved.getReviewedBy().getUsername());
         return ApprovalRecordResponse.from(saved);
     }

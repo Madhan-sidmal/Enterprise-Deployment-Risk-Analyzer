@@ -22,6 +22,7 @@ public class DeploymentService {
 
     private final DeploymentRepository deploymentRepository;
     private final UserRepository userRepository;
+    private final AuditLogService auditLogService;
 
     private User getCurrentUser() {
         UserDetailsImpl userDetails = (UserDetailsImpl)
@@ -63,7 +64,10 @@ public class DeploymentService {
         d.setPreviousFailureCount(request.getPreviousFailureCount() != null ? request.getPreviousFailureCount() : 0);
         d.setCreatedBy(creator);
 
-        return DeploymentResponse.from(deploymentRepository.save(d));
+        DeploymentResponse resp = DeploymentResponse.from(deploymentRepository.save(d));
+        auditLogService.log(AuditAction.DEPLOYMENT_CREATED, "DEPLOYMENT", resp.getId(),
+                d.getApplicationName() + " v" + d.getVersion());
+        return resp;
     }
 
     public List<DeploymentResponse> getAllDeployments() {
@@ -108,7 +112,10 @@ public class DeploymentService {
         d.setHasDependencyConflict(request.getHasDependencyConflict() != null ? request.getHasDependencyConflict() : false);
         d.setPreviousFailureCount(request.getPreviousFailureCount() != null ? request.getPreviousFailureCount() : 0);
 
-        return DeploymentResponse.from(deploymentRepository.save(d));
+        DeploymentResponse resp = DeploymentResponse.from(deploymentRepository.save(d));
+        auditLogService.log(AuditAction.DEPLOYMENT_UPDATED, "DEPLOYMENT", id,
+                d.getApplicationName() + " v" + d.getVersion());
+        return resp;
     }
 
     @Transactional
@@ -123,7 +130,10 @@ public class DeploymentService {
             throw new RuntimeException("Only DRAFT deployments can be submitted for review");
         }
         d.setStatus(DeploymentStatus.PENDING_REVIEW);
-        return DeploymentResponse.from(deploymentRepository.save(d));
+        DeploymentResponse resp = DeploymentResponse.from(deploymentRepository.save(d));
+        auditLogService.log(AuditAction.DEPLOYMENT_SUBMITTED, "DEPLOYMENT", id,
+                d.getApplicationName() + " v" + d.getVersion());
+        return resp;
     }
 
     @Transactional
@@ -137,7 +147,9 @@ public class DeploymentService {
         if (d.getStatus() != DeploymentStatus.DRAFT) {
             throw new RuntimeException("Only DRAFT deployments can be deleted");
         }
+        String name = d.getApplicationName() + " v" + d.getVersion();
         deploymentRepository.delete(d);
+        auditLogService.log(AuditAction.DEPLOYMENT_DELETED, "DEPLOYMENT", id, name);
     }
 
     public java.util.Map<String, Long> getDeploymentStats() {

@@ -235,13 +235,18 @@ const Dashboard = () => {
         <div style={{ fontWeight: 700, color: 'var(--text-primary)', marginBottom: 'var(--space-4)' }}>
           🗺️ Project Roadmap
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 'var(--space-3)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 'var(--space-3)', marginBottom: 'var(--space-4)' }}>
           {[
-            { phase: 1, name: 'Foundation', status: 'done' },
+            { phase: 1, name: 'Foundation',  status: 'done' },
             { phase: 2, name: 'Deployments', status: 'done' },
             { phase: 3, name: 'Risk Engine', status: 'done' },
-            { phase: 4, name: 'Dependencies', status: 'done' },
-            { phase: 5, name: 'Rollback', status: 'next' },
+            { phase: 4, name: 'Dependencies',status: 'done' },
+            { phase: 5, name: 'Rollback',    status: 'done' },
+            { phase: 6, name: 'Approvals',   status: 'done' },
+            { phase: 7, name: 'Audit Logs',  status: 'done' },
+            { phase: 8, name: 'Analytics',   status: 'done' },
+            { phase: 9, name: 'Docker',      status: 'done' },
+            { phase: 10, name: 'CI/CD',      status: 'done' },
           ].map(p => (
             <div key={p.phase} style={{
               padding: 'var(--space-3)',

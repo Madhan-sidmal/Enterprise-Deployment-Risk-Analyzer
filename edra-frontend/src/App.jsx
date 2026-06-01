@@ -14,9 +14,9 @@ import RiskAnalysis from './pages/RiskAnalysis';
 import Dependencies from './pages/Dependencies';
 import Rollback from './pages/Rollback';
 import Approvals from './pages/Approvals';
-import {
-  AuditLogsPage, AnalyticsPage, UsersPage
-} from './pages/ComingSoon';
+import AuditLogs from './pages/AuditLogs';
+import Analytics from './pages/Analytics';
+import { UsersPage } from './pages/ComingSoon';
 
 // Layout wrapper with sidebar
 const AppLayout = () => (
@@ -68,8 +68,8 @@ const App = () => {
             <Route path="/dependencies" element={<Dependencies />} />
             <Route path="/rollback" element={<Rollback />} />
             <Route path="/approvals" element={<Approvals />} />
-            <Route path="/audit-logs" element={<AuditLogsPage />} />
-            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/audit-logs" element={<AuditLogs />} />
+            <Route path="/analytics" element={<Analytics />} />
             <Route path="/users" element={
               <ProtectedRoute requiredRoles={['ROLE_ADMIN']}>
                 <UsersPage />

@@ -1,0 +1,76 @@
+version: '3.9'
+
+services:
+
+  # ── PostgreSQL ──────────────────────────────────────────
+  edra-db:
+    image: postgres:16-alpine
+    container_name: edra-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB:       edra_db
+      POSTGRES_USER:     edra_user
+      POSTGRES_PASSWORD: edra_secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U edra_user -d edra_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - edra-network
+
+  # ── Spring Boot Backend ─────────────────────────────────
+  edra-backend:
+    build:
+      context: ./edra-backend
+      dockerfile: Dockerfile
+    container_name: edra-backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILE:                      prod
+      SPRING_DATASOURCE_URL:               jdbc:postgresql://edra-db:5432/edra_db
+      SPRING_DATASOURCE_USERNAME:          edra_user
+      SPRING_DATASOURCE_PASSWORD:          edra_secret
+      SPRING_JPA_HIBERNATE_DDL_AUTO:       update
+      JWT_SECRET:                          ${JWT_SECRET:-edra-super-secret-jwt-key-change-in-prod-please}
+      JWT_EXPIRATION_MS:                   ${JWT_EXPIRATION_MS:-86400000}
+    ports:
+      - "8080:8080"
+    depends_on:
+      edra-db:
+        condition: service_healthy
+    networks:
+      - edra-network
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+
+  # ── React Frontend (Nginx) ──────────────────────────────
+  edra-frontend:
+    build:
+      context: ./edra-frontend
+      dockerfile: Dockerfile
+    container_name: edra-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      edra-backend:
+        condition: service_healthy
+    networks:
+      - edra-network
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  edra-network:
+    driver: bridge

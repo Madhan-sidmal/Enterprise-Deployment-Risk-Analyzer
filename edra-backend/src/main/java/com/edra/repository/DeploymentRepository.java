@@ -2,6 +2,7 @@ package com.edra.repository;
 
 import com.edra.model.Deployment;
 import com.edra.model.DeploymentStatus;
+import com.edra.model.Environment;
 import com.edra.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -24,6 +25,8 @@ public interface DeploymentRepository extends JpaRepository<Deployment, Long> {
     boolean existsByDeploymentId(String deploymentId);
 
     long countByStatus(DeploymentStatus status);
+
+    long countByEnvironment(Environment environment);
 
     @Query("SELECT d FROM Deployment d WHERE d.createdBy = ?1 ORDER BY d.createdAt DESC")
     List<Deployment> findByCreatedByUser(User user);
