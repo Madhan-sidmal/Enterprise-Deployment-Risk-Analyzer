@@ -10,8 +10,9 @@ import Dashboard from './pages/Dashboard';
 import Deployments from './pages/Deployments';
 import CreateDeployment from './pages/CreateDeployment';
 import DeploymentDetails from './pages/DeploymentDetails';
+import RiskAnalysis from './pages/RiskAnalysis';
 import {
-  RiskAnalysisPage, DependenciesPage,
+  DependenciesPage,
   RollbackPage, ApprovalsPage, AuditLogsPage, AnalyticsPage, UsersPage
 } from './pages/ComingSoon';
 
@@ -61,7 +62,7 @@ const App = () => {
             <Route path="/deployments/new" element={<CreateDeployment />} />
             <Route path="/deployments/:id" element={<DeploymentDetails />} />
             <Route path="/deployments/:id/edit" element={<CreateDeployment />} />
-            <Route path="/risk-analysis" element={<RiskAnalysisPage />} />
+            <Route path="/risk-analysis" element={<RiskAnalysis />} />
             <Route path="/dependencies" element={<DependenciesPage />} />
             <Route path="/rollback" element={<RollbackPage />} />
             <Route path="/approvals" element={
